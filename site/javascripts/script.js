@@ -48,22 +48,6 @@ function shuffleCards () {
   }
 }
 
-
-
-  /*
-  for (i = 0; i <= 4; i++) {
-    for (j = 1; j <= 5-i; j++) {
-      column[5+i] = card[(5-i) + j];
-      if (j == (5+i)) column[5-i].open = true;
-      
-      if (i > 0) {
-        column[5-i] = card [];
-        if (j == (5-i)) column[5-i].open = true;
-      }
-    }
-  } */
-
-
 function put (card) {
   
   if (card.open == true) image_path = card.image_path;
@@ -144,6 +128,7 @@ function dealCards () {
 }
 
 dealCards();
+
 // initialize column counters
 column[1].counter = 1;
 column[2].counter = 2;
@@ -154,7 +139,6 @@ column[6].counter = 4;
 column[7].counter = 3;
 column[8].counter = 2;
 column[9].counter = 1;
-
 
 $(function() {
   for (i = 1; i <= 9; i++) {
@@ -184,12 +168,21 @@ $(function() {
     $(this).children('.snapper').removeClass('active');
   });
 
+  $('.draggable').mousedown(function() {
+    $('img', this).css('border','1px solid #0000ff');
+  });
+
+  $('.draggable').mouseup(function() {
+    $('img', this).css('border','1px solid #cccccc');
+  });
+
   $('.draggable').draggable({
     containment: '#container',
     snap: '.active',
     snapMode: 'inner',
-    snapTolerance: 20,
+    snapTolerance: 8,
     zIndex: 2700,
+    //opacity: 0.95,
     scroll: false,
     start: function(event, ui) { 
       /* $(this).children('.snapper').removeClass('active'); */
@@ -200,12 +193,14 @@ $(function() {
     drag: function(event,ui) {
       var current_pos = $(this).position();
       $("span#current_pos").text("Current POS:\n x: " + current_pos.left + " // y: " + current_pos.top);
+      $('img', this).css('border','1px solid #0000ff');
     },
     stop: function(event,ui) { 
       /*$(this).children('.snapper').addClass('active'); */
       $('.draggable').not(this).children('.snapper').removeClass('droppable');
       var end_pos = $(this).position();
       $("span#end_pos").text("End POS:\n x: " + end_pos.left + " // y: " + end_pos.top);
+      $('img', this).css('border','1px solid #cccccc');
     }
   });
 
