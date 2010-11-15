@@ -1,0 +1,143 @@
+@import "reset.css"
+
+$viewport_width: 1000px
+$viewport_height: 550px
+$playground_margin_top: 10px
+$playground_margin_left: 23px
+$playground_width: $viewport_width - 2 * $playground_margin_left
+$playground_height: $viewport_height - 2 * $playground_margin_top
+
+$card_width: 96px
+$card_height: 132px
+// column_spacing: space b/een columns, _top: vertical spacing b/een cards on top of each other
+$column_spacing: 8px
+$card_spacing_vertical: 30px
+
+$total_column_width: (9 * $card_width) + (8 * $column_spacing)
+$column_margin_top: 10px
+
+// outer_padding serves to center the columns within the #playground div
+$outer_padding: round(($playground_width - $total_column_width) / 2)
+$total_card_width: $card_width + $column_spacing
+
+// stack columns positions (x: c1_left, y: column_margin_top)
+$c1_left: $outer_padding
+$c2_left: $outer_padding + 1 * $total_card_width
+$c3_left: $outer_padding + 2 * $total_card_width
+$c4_left: $outer_padding + 3 * $total_card_width
+$c5_left: $outer_padding + 4 * $total_card_width
+$c6_left: $outer_padding + 5 * $total_card_width
+$c7_left: $outer_padding + 6 * $total_card_width
+$c8_left: $outer_padding + 7 * $total_card_width
+$c9_left: $outer_padding + 8 * $total_card_width
+
+/* sadly, neither this nor variable arrays work in SASS:
+  @for $i from 1 through 9
+  @if ($i == 1) 
+    $total_column_width: (9 * $card_width) + (8 * $column_spacing)
+    $c_left[$i]: round(($playground_width - $total_column_width) / 2)
+  @else
+    $c#{$i}_left: $column_spacing + ($i - 1) * ($card_width + $column_spacing)
+  HOWEVER:
+    @for $i from 1 through 9
+      #column_#{$i}
+  works! */
+
+body
+  font-family: Arial
+  width: $viewport_width
+  margin: 0 auto
+
+  h1
+    display: none
+    font-size: 20px
+    margin: 10px auto
+    width: 100px
+    text-align: center
+  
+  #frame
+    width: $viewport_width
+    height: $viewport_height
+    margin: 0 auto
+    text-align: center
+    border: 1px solid grey
+
+  #container
+    position: relative
+    margin: $playground_margin_top $playground_margin_left
+    width: $playground_width
+    height: $playground_height
+    border: 1px solid grey
+
+    .columns
+      position: absolute
+      border-top: 1px solid black
+      width: $card_width
+      top: $column_margin_top
+
+    @for $i from 1 through 9
+      #column_#{$i}
+        // centering for variable column_spacing & card_width
+        @if ($i == 1) 
+          left: $outer_padding 
+        @else
+          left: $outer_padding + ($i - 1) * $total_card_width
+
+    @for $i from 2 through 30
+      .card_wrapper_#{$i}
+        width: $card_width
+        height: ($i * $card_height)
+
+    div.card
+      width: $card_width
+      height: $card_height
+
+    .draggable, .droppable
+      overflow: hidden
+    .draggable
+      float: left
+      z-index: 3
+    .droppable
+      float: right
+      position: absolute
+      right: 100px
+      top: 100px
+      z-index: 2
+
+    .card_wrapper_2
+      position: absolute
+      left: $c1_left
+      top: $column_margin_top
+
+    #king_of_clubs
+      position: absolute
+      //left: $c1_left
+      //top: $column_margin_top
+
+    #queen_of_hearts
+      position: absolute
+      //left: $c1_left
+      top: $card_spacing_vertical
+
+    #ace_of_spades
+      position: absolute
+      left: $c5_left
+      top: $column_margin_top 
+
+    div.card .snapper
+      width: $card_width 
+      height: 1px
+      position: absolute
+      top: $card_spacing_vertical
+      left: 0
+
+    img.card
+      width: 88px
+      height: 124px
+      padding: 3px
+      position: relative
+      overflow: hidden
+      background: #fff
+      border: 1px solid #ccc
+      -moz-border-radius: 7px
+      border-radius: 7px
