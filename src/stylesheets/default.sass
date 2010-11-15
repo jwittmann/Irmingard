@@ -82,11 +82,19 @@ body
           left: $outer_padding 
         @else
           left: $outer_padding + ($i - 1) * $total_card_width
+        height: 1px
+        overflow: visible
 
     @for $i from 2 through 30
       .card_wrapper_#{$i}
         width: $card_width
         height: ($i * $card_height)
+
+    @for $i from 1 through 60
+      .position_#{$i}
+        position: absolute
+        top: ($i - 1) * 30px 
+    
 
     div.card
       width: $card_width

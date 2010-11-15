@@ -1,6 +1,8 @@
 function Card (suit, value) {
   this.open = false;
+  this.dealt = false;
 
+  var suit_symbol;
   this.suit = suit;
   if (this.suit == 'hearts')   { this.colour = 'red'; suit_symbol = '♥'; }
   if (this.suit == 'diamonds') { this.colour = 'red'; suit_symbol = '♦'; }
@@ -21,8 +23,9 @@ function Card (suit, value) {
 
   this.image_path = '/images/' + this.label.toLowerCase() + '_of_' + this.suit.toLowerCase() + ".gif";
 
-  /* this.swapWithCard = function (swapperIndex) {
+  /*this.swapWithCard = function (swapperIndex) {
     var dumpster;
+    console.log(this);
     dumpster = card[this.index];
     card[this.index] = card[swapperIndex];
     card[swapperIndex] = dumpster;
@@ -33,12 +36,15 @@ function Card (suit, value) {
 
 function shuffleCards () {
   for (i = 1; i <= 9999; i++) {
-    var random_a = Math.floor(Math.random() * 104 + 1) // random number from 1 to 104
-    var random_b = Math.floor(Math.random() * 104 + 1) // random number from 1 to 104
-
+    var random_a = Math.floor(Math.random()*104) + 1; // random number from 1 to 104
+    var random_b = Math.floor(Math.random()*104) + 1; // random number from 1 to 104
+    /*console.log(random_a);
+    console.log(random_b);
+    if (card[random_a])
+      card[random_a].swapWithCard(random_b); */
     var temp = card[random_a];
     card[random_a] = card[random_b];
-    card[random_b] = temp;
+    card[random_b] = temp; 
   }
 }
 
@@ -108,62 +114,70 @@ var column = new Array(number_of_columns);
 for (i = 0; i < number_of_columns; i++)
   column[i] = new Array(max_cards_per_column);
 
+// dealing 25 cards in total, after this card[1-25] will have been dealt
 function dealCards () {
+  var count_helper = 0;
+
   // rows
   for (i = 1; i <= 5; i++) {
-    // columns; first row: 9 cards in 9 columns, second row: 7 cards in 7 columns etc.
 
+    // count_helper is required for proper progression through cards array, it keeps
+    // track of how many cards have already been dealt and how deep into the cards array
+    // we already went.
+    // count_helper should be 9 for i==2; 16 for i==3; 21 for i==4; and 24 for i==5
+    if (i > 1) count_helper += (9 - 2*(i-2));
+
+    // columns; first row: 9 cards in 9 columns, second row: 7 cards in 7 columns etc.
     for (j = i; j <= (10 - i); j++) {
-      column[j][i] = card[j + (i-1) * (9 - 2 * (i-2))];
-      /* if (j == 0 || j == (9 - 2 * (i-1))) column[j+(i-1)][i].open = true;
-      else column[j][i].open = false; */
+      index_to_be_dealt = count_helper + (j - i + 1);
+      
+      if (card[index_to_be_dealt].dealt == false)
+        column[j][i] = card[index_to_be_dealt];
+      
+      column[j][i].card_index = index_to_be_dealt;
+      card[index_to_be_dealt].dealt = true;
+
+      if ((j == i) || (j == (10-i))) column[j][i].open = true;
+      else column[j][i].open = false;
     }
   }
 }
 
 dealCards();
+// initialize column counters
+column[1].counter = 1;
+column[2].counter = 2;
+column[3].counter = 3;
+column[4].counter = 4;
+column[5].counter = 5;
+column[6].counter = 4;
+column[7].counter = 3;
+column[8].counter = 2;
+column[9].counter = 1;
 
-//card.swap(39,86);
-/*var dump;
-dump = card[1];
-card[1] = card[2];
-card[2] = dump;*/
-/* card[1].swapWithCard(86); */
-
-// test data:
-/*
-test1 = 39;
-test2 = 12;
-
-column[1][1] = card[test1];
-card[test1].column   = 1;
-card[test1].position = 1;
-
-column[1][2] = card[test2];
-card[test2].column   = 1;
-card[test2].position = 2; */
 
 $(function() {
-  $('#column_1').append(put(card[1]));
+  for (i = 1; i <= 9; i++) {
+    for (j = 1; j <= column[i].counter; j++) {
+      $('#column_' + i).append(put(column[i][j]));
+    }
+  }
+
+  for (i = 1; i <= 9; i++) {
+    for (j=2; j<=60; j++) {
+      $('#column_' + i + ' div.card:nth-child('+ j +')').addClass('position_' + j);
+      //$('#column_' + i + ' div.card:nth-child('+ j +')').css("top", (j-1)*30+'px').css("position","absolute");
+    }
+  }
+    
+
+ /* $('#column_1').append(put(card[1]));
   $('#column_1').append(put(card[2]));
   $('#column_1').append(put(card[3]));
 
   $('#column_3').append(put(card[3]));
 
-  $('#column_5').append($('#column_1 .card:first'));
-
-  // populate cards
-  /*test_card1 = $('#' + column[1][1].full_label.toLowerCase().replace(/ /g,"_") + ' img');
-  test_card2 = $('#' + column[1][2].full_label.toLowerCase().replace(/ /g,"_") + ' img');
-
-  test_card1.attr("src", column[1][1].image_path);
-  test_card2.attr("src", column[1][2].image_path); */
-  //test_card1.data("suit", column[1][2].suit);
-  //test_card2.data('foo', 52);
-
-  $('#frame').append(function(){
-    }
-  );
+  $('#column_5').append($('#column_1 .card:first')); */
 
 
   $('div.card').mouseover(function() {
