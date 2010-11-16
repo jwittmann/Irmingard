@@ -17,21 +17,17 @@ function Card (suit, value) {
   if (value == 13)             this.label = 'King';
 
   this.full_label = this.label + ' of ' + this.suit;
-
   this.symbol_label = suit_symbol + ' ' + this.label;
-
   this.image_path = '/images/' + this.label.toLowerCase() + '_of_' + this.suit.toLowerCase() + ".gif";
 
   /*this.swapWithCard = function (swapperIndex) {
     var dumpster;
-    console.log(this);
+    // console.log(this);
     dumpster = card[this.index];
     card[this.index] = card[swapperIndex];
     card[swapperIndex] = dumpster;
-    return;
+    //return;
   } */
-
-
 }
 
 function card_by_label (label_to_find) {
@@ -42,35 +38,42 @@ function card_by_label (label_to_find) {
   return return_value;
 }
 
+function areCompatible (cardA, cardB) {
+  if ((cardA.value + 1 == cardB.value) && (cardA.colour != cardB.colour))
+    return true;
+  else return false;
+}
+
 function shuffleCards () {
   for (i = 1; i <= 9999; i++) {
     var random_a = Math.floor(Math.random()*104) + 1; // random number from 1 to 104
     var random_b = Math.floor(Math.random()*104) + 1; // random number from 1 to 104
-    /*console.log(random_a);
-    console.log(random_b);
-    if (card[random_a])
-      card[random_a].swapWithCard(random_b); */
-    var temp = card[random_a];
-    card[random_a] = card[random_b];
-    card[random_b] = temp; 
+    // swap random cards
+    if (random_a != random_b) {
+      var temp = card[random_a];
+      card[random_a] = card[random_b];
+      card[random_b] = temp;
+    }
   }
 }
 
 function drawToDOM (card) {
-  
   var image_path = '/images/back.gif';
-  if (card.open == true) image_path = card.image_path;
+  if (card.open == true) {
+    image_path = card.image_path;
+    active_switcher = ' active';
+  }
  
-  var return_value = '';
+  var active_switcher = '';
+  if (card.open == true) active_switcher = ' active';
   
   //console.log(card);
   if (card.position == column[card.column].counter) {
   }
 
-
   return '<div class="draggable card">\n\
     <img class="card" src="' + image_path + '" />\n\
-    <div class="snapper active"> &nbsp; </div>\n\
+    <div class="snapper' + active_switcher + '"> &nbsp; </div>\n\
     </div>';
 }
 
@@ -226,8 +229,16 @@ $(function() {
   for (i = 1; i <= 9; i++) {
     for (j = 1; j <= column[i].counter; j++) {
       $('#column_' + i).append(drawToDOM(column[i][j]));
-      $('#column_' + i + ' div.card:nth-child('+ j +')').addClass('position_' + j);
+      $('#column_' + i + ' div.card:nth-child('+ j +')').addClass('position_' + j).data('column',column[i][j].column + '').data('position',column[i][j].position + '');
     }
+  }
+
+  function CardFromDOM(card) {
+    return column[$(card).data('column')][$(card).data('position')];
+  }
+
+  function DOMfromCard(card) {
+    return $('#column_' + card.column + ' .position_' + card.position);
   }
 
   /*for (i = 1; i <= 9; i++) {
@@ -247,7 +258,21 @@ $(function() {
   $('#column_5').append($('#column_1 .card:first')); */
 
   $('div.card').dblclick(function() {
-    $('div.card')
+    console.log($(this));
+    var current_card = CardFromDOM(this); //column[$(this).data('column')][$(this).data('position')];
+    console.log(current_card);
+    /*var current_column   = parseInt(current_card.data('column'));
+    var current_position = parseInt(current_card.data('position'));
+    console.log(current_column);
+    console.log(current_position); */
+
+    if (current_card.open == false && current_card.position == column[current_card.column].counter-1) {
+      current_card.open = true;
+      console.log(current_card.column);
+      console.log(current_card.position);
+      console.log('#column_' + current_card.column + ' .position_' + current_card.position  +' img');
+      $('#column_' + current_card.column + ' .position_' + current_card.position  +' img').attr('src', current_card.image_path);
+    }
   });
 
 
@@ -268,8 +293,10 @@ $(function() {
     snap: '.active',
     snapMode: 'inner',
     snapTolerance: 8,
-    zIndex: 2700,
+    zIndex: 4,
     //opacity: 0.95,
+    revert: 'invalid',
+    revertDuration: 350,
     scroll: false,
     start: function(event, ui) { 
       /* $(this).children('.snapper').removeClass('active'); */
@@ -285,9 +312,58 @@ $(function() {
     stop: function(event,ui) { 
       /*$(this).children('.snapper').addClass('active'); */
       $('.draggable').not(this).children('.snapper').removeClass('droppable');
+      $(this).css('z-index','22');
       var end_pos = $(this).position();
       $("span#end_pos").text("End POS:\n x: " + end_pos.left + " // y: " + end_pos.top);
       $('img', this).css('border','1px solid #cccccc');
+    }
+  });
+
+  $('#column_4 .position_4').draggable({
+    scope: 'awaaa'
+  });
+
+  $('#column_5 .position_5').bind('dropover', function() {
+    $('img', this).css('border', '1px solid blue');
+  }); 
+
+  $('#column_5 .position_5').bind('dropout', function() {
+    $('img', this).css('border', '1px solid #ccc');
+  });
+
+  /* $('column_5 .position_5').bind('drop', function() {
+    $('.draggable-ui-dragging').addClass('position_' + ($(this).position + 1)).append($('#column_' + $(this).column + ' .card:first'));
+  }); */
+
+  $('#column_5 .position_5').droppable({
+    scope: 'awaaa',
+    addClasses: false,
+    tolerance: 'intersect',
+    drop: function(event, ui) {
+      //console.log($(this).css('z-index'));
+      //var z_index_incremented = parseInt($(this).css('z-index')) + 1;
+      //console.log(z_index_incremented + '');
+      //console.log($(ui.draggable));
+      
+      dropped_card_dom = ui.draggable;
+      dropped_on_dom   = this;
+
+      $('img', this).css('border', '1px solid #ccc');
+      var dropped_card = CardFromDOM(dropped_card_dom);
+      var dropped_on   = CardFromDOM(dropped_on_dom);
+
+      /* var dropped_card_dom = DOMfromCard(dropped_card);
+      var dropped_on_dom   = DOMfromCard(dropped_card); */
+
+      //column[$(ui.draggable).data('column')][$(ui.draggable).data('position')];
+      //var dropped_card = CardFromDOM($(ui.draggable)column[$(ui.draggable).data('column')][$(ui.draggable).data('position')];
+      // console.log(dropped_card);
+      $(dropped_card_dom).addClass('zindex_' + dropped_card.position);
+      //$(ui.draggable).className = $(ui.draggable).className.replace(/\bbg.*?\b/g, '12');
+
+      /* $(ui.draggable).removeClass(/\bzindex.*?\b/g);
+      $(ui.draggable).addClass('zindex_12'); */
+      $(ui.draggable).removeClass
     }
   });
 
