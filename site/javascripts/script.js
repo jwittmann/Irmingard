@@ -56,11 +56,18 @@ function shuffleCards () {
   }
 }
 
-function put (card) {
+function drawToDOM (card) {
   
   var image_path = '/images/back.gif';
   if (card.open == true) image_path = card.image_path;
  
+  var return_value = '';
+  
+  //console.log(card);
+  if (card.position == column[card.column].counter) {
+  }
+
+
   return '<div class="draggable card">\n\
     <img class="card" src="' + image_path + '" />\n\
     <div class="snapper active"> &nbsp; </div>\n\
@@ -95,6 +102,39 @@ for (var i = 1; i <= 2; i++) {
 // ===== SHUFFLE CARDS =====
 //shuffleCards();
 
+// ===== TESTING ===========
+// kos to 5x5
+var temp = card[25];
+card[25] = card[39];
+card[39] = temp;
+
+// qoh to 4x4
+var temp = card[22];
+card[22] = card[12];
+card[12] = temp;
+
+// joc to 3x3
+var temp = card[17];
+card[17] = card[50];
+card[50] = temp;
+
+// 9os to 1x1
+var temp = card[1];
+card[1] = card[35];
+card[35] = temp;
+
+// 10oh to 9x1
+var temp = card[9];
+card[9] = card[10];
+card[10] = temp;
+
+// 9oc to 8x2
+var card_to_set = card_by_label('9 of clubs');
+var temp = card[16];
+card[16] = card_to_set;
+card_to_set = temp;
+
+
 // initialize columns as 2-dimensional array
 // 9 = number of columns
 // 60 = maximum amount of cards per column; might be too small!
@@ -127,8 +167,11 @@ function dealCards () {
     for (j = i; j <= (10 - i); j++) {
       index_to_be_dealt = count_helper + (j - i + 1);
       
-      if (card[index_to_be_dealt].dealt == false)
+      if (card[index_to_be_dealt].dealt == false) {
         column[j][i] = card[index_to_be_dealt];
+        card[index_to_be_dealt].column   = j;
+        card[index_to_be_dealt].position = i;
+      }
       
       column[j][i].card_index = index_to_be_dealt;
       card[index_to_be_dealt].dealt = true;
@@ -141,8 +184,11 @@ function dealCards () {
 
 dealCards();
 
+
+// ========= TEST DATA start ======
+
 // sort cards for testing purposes
-column[5][5] = card_by_label('King of spades');
+/*column[5][5] = card_by_label('King of spades');
 column[4][4] = card_by_label('Queen of hearts');
 column[3][3] = card_by_label('Jack of clubs');
 column[2][2] = card_by_label('10 of diamonds');
@@ -157,7 +203,11 @@ for (i=1; i<=2; i++) {
     if (i==1) column[j][j].open = true;
     if (i==2) column[5+j][5-j].open = true;
   }
-} 
+} */
+
+// ========== END test data ======
+
+
 
 // initialize column counters
 column[1].counter = 1;
@@ -175,7 +225,7 @@ $(function() {
   // populate DOM with cards
   for (i = 1; i <= 9; i++) {
     for (j = 1; j <= column[i].counter; j++) {
-      $('#column_' + i).append(put(column[i][j]));
+      $('#column_' + i).append(drawToDOM(column[i][j]));
       $('#column_' + i + ' div.card:nth-child('+ j +')').addClass('position_' + j);
     }
   }
