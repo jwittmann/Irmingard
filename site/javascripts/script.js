@@ -10,12 +10,11 @@ function Card (suit, value) {
   if (this.suit == 'clubs')    { this.colour = 'black'; suit_symbol = '♣'; }
 
   this.value = value;
-
-  if (value == 1) this.label = 'Ace';
+  if (value == 1)              this.label = 'Ace';
   if (value > 1 && value < 11) this.label = value.toString();
-  if (value == 11) this.label = 'Jack';
-  if (value == 12) this.label = 'Queen';
-  if (value == 13) this.label = 'King';
+  if (value == 11)             this.label = 'Jack';
+  if (value == 12)             this.label = 'Queen';
+  if (value == 13)             this.label = 'King';
 
   this.full_label = this.label + ' of ' + this.suit;
 
@@ -32,6 +31,15 @@ function Card (suit, value) {
     return;
   } */
 
+
+}
+
+function card_by_label (label_to_find) {
+  var return_value = '';
+  for (i=1; i<=104; i++) {
+    if (card[i].full_label == label_to_find) { return_value = card[i]; break; }
+  }
+  return return_value;
 }
 
 function shuffleCards () {
@@ -50,8 +58,8 @@ function shuffleCards () {
 
 function put (card) {
   
+  var image_path = '/images/back.gif';
   if (card.open == true) image_path = card.image_path;
-  else image_path = '/images/back.gif';
  
   return '<div class="draggable card">\n\
     <img class="card" src="' + image_path + '" />\n\
@@ -82,7 +90,10 @@ for (var i = 1; i <= 2; i++) {
   }
 }
 
-shuffleCards();
+
+
+// ===== SHUFFLE CARDS =====
+//shuffleCards();
 
 // initialize columns as 2-dimensional array
 // 9 = number of columns
@@ -97,6 +108,7 @@ var max_cards_per_column = 60;
 var column = new Array(number_of_columns); 
 for (i = 0; i < number_of_columns; i++)
   column[i] = new Array(max_cards_per_column);
+
 
 // dealing 25 cards in total, after this card[1-25] will have been dealt
 function dealCards () {
@@ -129,6 +141,24 @@ function dealCards () {
 
 dealCards();
 
+// sort cards for testing purposes
+column[5][5] = card_by_label('King of spades');
+column[4][4] = card_by_label('Queen of hearts');
+column[3][3] = card_by_label('Jack of clubs');
+column[2][2] = card_by_label('10 of diamonds');
+column[1][1] = card_by_label('9 of spades');
+column[4][2] = card_by_label('Ace of diamonds');
+column[5][4] = card_by_label('7 of clubs');
+
+// make all customly added cards visible (this may also make other default cards visible)
+for (i=1; i<=2; i++) {
+  for (j=1; j<=5; j++) {
+    if (i==2 && j==5) break;
+    if (i==1) column[j][j].open = true;
+    if (i==2) column[5+j][5-j].open = true;
+  }
+} 
+
 // initialize column counters
 column[1].counter = 1;
 column[2].counter = 2;
@@ -141,18 +171,21 @@ column[8].counter = 2;
 column[9].counter = 1;
 
 $(function() {
+
+  // populate DOM with cards
   for (i = 1; i <= 9; i++) {
     for (j = 1; j <= column[i].counter; j++) {
       $('#column_' + i).append(put(column[i][j]));
+      $('#column_' + i + ' div.card:nth-child('+ j +')').addClass('position_' + j);
     }
   }
 
-  for (i = 1; i <= 9; i++) {
+  /*for (i = 1; i <= 9; i++) {
     for (j=2; j<=60; j++) {
       $('#column_' + i + ' div.card:nth-child('+ j +')').addClass('position_' + j);
       //$('#column_' + i + ' div.card:nth-child('+ j +')').css("top", (j-1)*30+'px').css("position","absolute");
     }
-  }
+  } */
     
 
  /* $('#column_1').append(put(card[1]));
@@ -162,6 +195,10 @@ $(function() {
   $('#column_3').append(put(card[3]));
 
   $('#column_5').append($('#column_1 .card:first')); */
+
+  $('div.card').dblclick(function() {
+    $('div.card')
+  });
 
 
   $('div.card').mouseover(function() {
