@@ -98,8 +98,27 @@ function drawToDOM (card) {
   if (card.position == column[card.column].counter) {
   }
 
-  return '<div class="draggable card zindex_' + card.position + '">\n\
+  return '<div class="draggable_disabled card" style="z-index:' + card.position + '">\n\
     <img class="card" src="' + image_path + '" />\n\
     <div class="snapper' + active_switcher + '"> &nbsp; </div>\n\
     </div>';
+}
+
+
+function OpenCard(card) {
+    //console.log($(this));
+    //column[$(this).data('column')][$(this).data('position')];
+    //console.log(current_card);
+    /*var current_column   = parseInt(current_card.data('column'));
+    var current_position = parseInt(current_card.data('position'));
+    console.log(current_column);
+    console.log(current_position); */
+
+    //if (current_card.open == false && current_card.position == column[current_card.column].counter-1) {
+      //current_card.open = true;
+      //console.log(current_card.column);
+      //console.log(current_card.position);
+      //console.log('#column_' + current_card.column + ' .position_' + current_card.position  +' img');
+  $('#column_' + card.column + ' .position_' + card.position  +' img').attr('src', card.image_path);
+    //}
 }

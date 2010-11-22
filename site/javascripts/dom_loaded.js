@@ -32,27 +32,20 @@ $(function() {
 
   $('#column_5').append($('#column_1 .card:first')); */
 
-  $('div.card').dblclick(function() {
-    console.log($(this));
-    var current_card = CardFromDOM(this); //column[$(this).data('column')][$(this).data('position')];
-    console.log(current_card);
-    /*var current_column   = parseInt(current_card.data('column'));
-    var current_position = parseInt(current_card.data('position'));
-    console.log(current_column);
-    console.log(current_position); */
-
-    if (current_card.open == false && current_card.position == column[current_card.column].counter-1) {
-      current_card.open = true;
-      console.log(current_card.column);
-      console.log(current_card.position);
-      console.log('#column_' + current_card.column + ' .position_' + current_card.position  +' img');
-      $('#column_' + current_card.column + ' .position_' + current_card.position  +' img').attr('src', current_card.image_path);
+ 
+  // add snappers:
+  for (i = 1; i<=104; i++) {
+    if (card[i].open == true) {
+     var open_card = DOMfromCard(card[i]);
+     $(open_card).removeClass('draggable_disabled').addClass('draggable');
+     $('.snapper', open_card).addClass('active');
     }
-  });
+  }
 
-
-  $('div.card').mouseover(function() {
-    $(this).children('.snapper').removeClass('active');
+  $('.draggable').mouseover(function() {
+    if ($(this).children('.snapper').hasClass('active')) {
+      $(this).children('.snapper').removeClass('active');
+    }
   });
 
   $('.draggable').mousedown(function() {
@@ -63,12 +56,17 @@ $(function() {
     $('img', this).css('border','1px solid #cccccc');
   });
 
+  // remove ghost images that would appear when dragging - even if $('.draggable_disabled').draggable('disable') was set
+  $('.draggable_disabled').mousedown(function() {
+    return false;
+  });
+
   $('.draggable').draggable({
     containment: '#container',
     snap: '.active',
     snapMode: 'inner',
     snapTolerance: 8,
-    zIndex: 3000,
+    zIndex: 300,
     //opacity: 0.95,
     revert: 'invalid',
     revertDuration: 350,
@@ -93,7 +91,8 @@ $(function() {
       $('img', this).css('border','1px solid #cccccc');
       var card = CardFromDOM(this);
       $(this).css('z-index', (card.position + ''));
-
+      $(this).css('left','0px');
+      $(this).css('top', (card.position - 1) * 30 + 'px');
     }
   });
 
@@ -123,33 +122,36 @@ $(function() {
       //console.log(z_index_incremented + '');
       //console.log($(ui.draggable));
       
-      dropped_card_dom = ui.draggable;
-      dropped_on_dom   = this;
+      var dropped_card_dom = ui.draggable;
+      var dropped_on_dom   = this;
 
       $('img', this).css('border', '1px solid #ccc');
       var dropped_card = CardFromDOM(dropped_card_dom);
       var dropped_on   = CardFromDOM(dropped_on_dom);
 
-      /* var dropped_card_dom = DOMfromCard(dropped_card);
-      var dropped_on_dom   = DOMfromCard(dropped_card); */
+      if ((dropped_card.position > 1) && (column[dropped_card.column][dropped_card.position - 1] != undefined)) {
+        var card_to_open = column[dropped_card.column][dropped_card.position - 1]
+        card_to_open.open = true;
+        OpenCard(card_to_open);
+      }
 
+      // the dropped card's Z-INDEX is updated in draggable's 'stop' event, which is executed AFTER droppable's 'drop'
       dropped_card.position = dropped_on.position + 1;
+      dropped_card.column   = dropped_on.column;
+
+      $(dropped_card_dom).addClass('position_' + dropped_card.position);
+      $('#column_' + dropped_card.column).append($(dropped_card_dom));
 
       //column[$(ui.draggable).data('column')][$(ui.draggable).data('position')];
       //var dropped_card = CardFromDOM($(ui.draggable)column[$(ui.draggable).data('column')][$(ui.draggable).data('position')];
       // console.log(dropped_card);
-      $(dropped_card_dom).addClass('zindex_' + (dropped_on.position + 1));
+      //$(dropped_card_dom).addClass('zindex_' + (dropped_on.position + 1));
       //$(ui.draggable).className = $(ui.draggable).className.replace(/\bbg.*?\b/g, '12');
 
-      /* $(ui.draggable).removeClass(/\bzindex.*?\b/g);
-      $(ui.draggable).addClass('zindex_12'); */
-      $(dropped_card_dom).removeClass('zindex_' + dropped_card.position);
-      $(dropped_card_dom).css('z-index','15');
-      $(dropped_card_dom).css('border','3px solid yellow')
     }
   });
 
-  $('div.card').mouseout(function() {
+  $('.draggable').mouseout(function() {
     $(this).children('.snapper').addClass('active');
   });
 

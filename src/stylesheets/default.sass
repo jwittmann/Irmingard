@@ -94,17 +94,11 @@ body
       .position_#{$i}
         position: absolute
         top: ($i - 1) * 30px 
-    
 
     div.card
       width: $card_width
       height: $card_height
 
-    .draggable, .droppable
-      overflow: hidden
-    .draggable
-      float: left
-      z-index: 3
     .droppable
       float: right
       position: absolute
@@ -114,23 +108,23 @@ body
 
     .card_wrapper_2
       position: absolute
-      left: $c1_left
-      top: $column_margin_top
-
-    #king_of_clubs
-      position: absolute
       //left: $c1_left
       //top: $column_margin_top
 
-    #queen_of_hearts
-      position: absolute
+    //#king_of_clubs
+      //position: absolute
       //left: $c1_left
-      top: $card_spacing_vertical
+      //top: $column_margin_top
 
-    #ace_of_spades
-      position: absolute
-      left: $c5_left
-      top: $column_margin_top 
+    //#queen_of_hearts
+      //position: absolute
+      //left: $c1_left
+      //top: $card_spacing_vertical
+
+    //#ace_of_spades
+      //position: absolute
+      //left: $c5_left
+      //top: $column_margin_top 
 
     div.card .snapper
       width: $card_width
@@ -146,10 +140,6 @@ body
       position: relative
       overflow: hidden
       background: #fff
-      border: 1px solid #ccc
+      border: 1px solid #888
       -moz-border-radius: 7px
       border-radius: 7px
-
-@for $i from 1 through 60
-  .zindex_#{$i}
-    z-index: $i !important
