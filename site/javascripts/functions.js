@@ -91,14 +91,19 @@ function drawToDOM (card) {
     active_switcher = ' active';
   }
  
+  var open_switcher = '';
   var active_switcher = '';
-  if (card.open == true) active_switcher = ' active';
+  if (card.open == true) {
+    open_switcher = ' open';
+    active_switcher = ' active';
+  }
+
   
   //console.log(card);
   if (card.position == column[card.column].counter) {
   }
 
-  return '<div class="draggable_disabled card" style="z-index:' + card.position + '">\n\
+  return '<div class="draggable_disabled card' + open_switcher + '" style="z-index:' + card.position + '">\n\
     <img class="card" src="' + image_path + '" />\n\
     <div class="snapper' + active_switcher + '"> &nbsp; </div>\n\
     </div>';

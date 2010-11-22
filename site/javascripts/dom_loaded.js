@@ -136,11 +136,22 @@ $(function() {
       }
 
       // the dropped card's Z-INDEX is updated in draggable's 'stop' event, which is executed AFTER droppable's 'drop'
+        
+      $(dropped_card_dom).removeClass('position_' + dropped_card.position);
+      
       dropped_card.position = dropped_on.position + 1;
       dropped_card.column   = dropped_on.column;
 
       $(dropped_card_dom).addClass('position_' + dropped_card.position);
       $('#column_' + dropped_card.column).append($(dropped_card_dom));
+
+     
+      $('#column_' + dropped_on.column + ' .open').addClass('haha'); // works!
+
+      //$(dropped_card_dom).add('#column_' + dropped_on.column + ' .open').addClass('haha');
+      
+      
+      //  .wrappAll('<div class="wrapper">');
 
       //column[$(ui.draggable).data('column')][$(ui.draggable).data('position')];
       //var dropped_card = CardFromDOM($(ui.draggable)column[$(ui.draggable).data('column')][$(ui.draggable).data('position')];
