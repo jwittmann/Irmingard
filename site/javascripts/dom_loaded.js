@@ -92,7 +92,7 @@ $(function() {
       var card = CardFromDOM(this);
       $(this).css('z-index', (card.position + ''));
       $(this).css('left','0px');
-      $(this).css('top', (card.position - 1) * 30 + 'px');
+      //$(this).css('top', (card.position - 1) * 30 + 'px');
     }
   });
 
@@ -145,8 +145,33 @@ $(function() {
       $(dropped_card_dom).addClass('position_' + dropped_card.position);
       $('#column_' + dropped_card.column).append($(dropped_card_dom));
 
-     
-      $('#column_' + dropped_on.column + ' .open').addClass('haha'); // works!
+      $('#column_' + dropped_on.column + ' div.open').wrapAll('<div class="card_wrapper_2 draggable" />');
+      var wrapper_vertical_margin = $(dropped_on_dom).css('top');
+      $('.card_wrapper_2').css('position', 'absolute');
+      $('.card_wrapper_2').css('top', wrapper_vertical_margin);
+      $('.card_wrapper_2 div.open:eq(0)').css('top','0').draggable("option", "disabled", true).removeClass('draggable');
+      $('.card_wrapper_2 div.open:eq(1)').css('top','30px');
+      //$('.card_wrapper_2').css('z-index',dropped_on.position);
+      $('.card_wrapper_2').draggable({
+        containment: '#container',
+        snap: '.active',
+        snapMode: 'inner',
+        snapTolerance: 8,
+        zIndex: 300,
+        //opacity: 0.95,
+        revert: 'invalid',
+        revertDuration: 350,
+        scroll: false,
+      });
+
+      //$('.card_wrapper_2 ').;
+
+    $(this).droppable("option", "disabled", true);
+      
+      
+      /*$('#column_' + dropped_on.column + ' div.open:first').before('<div class="wrapper">'); // works!
+      $(dropped_card_dom).after('</div>'); */
+
 
       //$(dropped_card_dom).add('#column_' + dropped_on.column + ' .open').addClass('haha');
       
@@ -163,7 +188,9 @@ $(function() {
   });
 
   $('.draggable').mouseout(function() {
-    $(this).children('.snapper').addClass('active');
+    dragged_card = CardFromDOM(this);
+    if ((dragged_card.open == true) && ((dragged_card.column > 0) && (dragged_card.column < 10)))
+      $(this).children('.snapper').addClass('active');
   });
 
 });
