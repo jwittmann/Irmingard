@@ -3,25 +3,8 @@ $(function() {
   populateDOMwithCards();
 
   $('.draggable').mouseInteractions();
-
-/*  $('.draggable').mouseover(function() {
-    if ($(this).children('.snapper').hasClass('active')) {
-      $(this).children('.snapper').removeClass('active');
-    }
-  });
-
-  $('.draggable').mousedown(function() {
-    $('img', this).css('border','1px solid #0000ff');
-  });
-
-  $('.draggable').mouseup(function() {
-    $('img', this).css('border','1px solid #cccccc');
-  }); */
-
   // remove ghost images that would appear when dragging - even if $('.draggable_disabled').draggable('disable') was set
-  $('.draggable_disabled').mousedown(function() {
-    return false;
-  });
+  $('.draggable_disabled').mousedown(function() { return false; });
 
   $('.draggable').draggable({
     containment: '#container',
@@ -29,38 +12,50 @@ $(function() {
     snapMode: 'inner',
     snapTolerance: 8,
     zIndex: 300,
-    //opacity: 0.95,
     revert: 'invalid',
     revertDuration: 350,
     scroll: false,
-    start: function(event, ui) { 
-      /* $(this).children('.snapper').removeClass('active'); */
-      /* $('.draggable').not(this).children('.snapper').addClass('droppable'); */
-      var start_pos = $(this).position();
-      $("span#start_pos").text("Start POS:\n x: "+ start_pos.left + " // y: " + start_pos.top);
-    },
+    start: function(event,ui){
+             dragStart(this);
+           },
     drag: function(event,ui) {
-      var current_pos = $(this).position();
-      $("span#current_pos").text("Current POS:\n x: " + current_pos.left + " // y: " + current_pos.top);
-      $('img', this).css('border','1px solid #0000ff');
-    },
+            dragActive(this);
+          },
     stop: function(event,ui) { 
-      /*$(this).children('.snapper').addClass('active'); */
-      $('.draggable').not(this).children('.snapper').removeClass('droppable');
-      //$(this).css('z-index','22');
-      var end_pos = $(this).position();
-      $("span#end_pos").text("End POS:\n x: " + end_pos.left + " // y: " + end_pos.top);
-      $('img', this).css('border','1px solid #cccccc');
-      var card = DOM2Card(this);
-      $(this).css('z-index', (card.position + ''));
-      $(this).css('left','0px');
-      //$(this).css('top', (card.position - 1) * 30 + 'px');
-    }
+            dragStop(this);
+          }
   });
 
-  $('#column_4 .position_4').draggable({
+  var open_card = new Array();
+  for (i = 1; i <= 9; i++) {
+    if (column[i][column[i].counter].open == true)
+      open_card[i] = column[i][column[i].counter];
+  }
+  //console.log(open_card[9]);
+  //console.log(canBeDroppedOn(open_card[4], open_card[5]));
+
+  for (i = 1; i <= 9; i++) {
+    for (j = 1; j <=9; j++) {
+      if (j != i) 
+        if (canBeDroppedOn(open_card[i], open_card[j])) {
+          var drag_me         = open_card[i];
+          var drag_me_dom     = Card2DOM(drag_me);
+          var drop_target     = open_card[j];
+          var drop_target_dom = Card2DOM(drop_target);
+          
+          $(drag_me_dom).makeDraggable();
+          $(drag_me_dom).draggable("option", "scope", drop_target.value + '' + drop_target.colour);
+          $(drop_target_dom).droppable(); //makeDropTarget();
+          $(drop_target_dom).droppable("option", "scope", drop_target.value + '' + drop_target.colour);
+        }
+    }
+  }
+
+  console.log($(drag_me).draggable("scope"));
+
+  /*$('#column_4 .position_4').draggable({
     scope: 'awaaa'
-  });
+  });*/
 
   $('#column_5 .position_5').bind('dropover', function() {
     $('img', this).css('border', '1px solid blue');

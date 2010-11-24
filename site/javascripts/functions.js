@@ -197,6 +197,25 @@ $.fn.makeDraggable = function () {
   $(this).addClass('draggable');
 }
 
+// --- DRAG HANDLING ------------------------------
+function dragStart (dragElement) { 
+  /* var start_pos = $(this).position();
+  $("span#start_pos").text("Start POS:\n x: "+ start_pos.left + " // y: " + start_pos.top); */
+}
+
+function dragActive (dragElement) {
+  /* var current_pos = $(this).position();
+  $("span#current_pos").text("Current POS:\n x: " + current_pos.left + " // y: " + current_pos.top); */
+}
+
+function dragStop (dragElement) {
+  // $('.draggable').not(dragElement).children('.snapper').removeClass('droppable'); // what's this for???
+  /*var end_pos = $(this).position();
+  $("span#end_pos").text("End POS:\n x: " + end_pos.left + " // y: " + end_pos.top);*/
+  var card = DOM2Card(dragElement);
+  $(dragElement).css('z-index', (card.position + ''));
+  $(dragElement).css('left','0px');
+}
 
 // --- DROP HANDLING ------------------------------
 
