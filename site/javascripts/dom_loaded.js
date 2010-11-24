@@ -1,48 +1,10 @@
 $(function() {
 
-  // populate DOM with cards
-  for (i = 1; i <= 9; i++) {
-    for (j = 1; j <= column[i].counter; j++) {
-      $('#column_' + i).append(drawToDOM(column[i][j]));
-      $('#column_' + i + ' div.card:nth-child('+ j +')').addClass('position_' + j).data('column',column[i][j].column + '').data('position',column[i][j].position + '');
-    }
-  }
+  populateDOMwithCards();
 
-  function CardFromDOM(card) {
-    return column[$(card).data('column')][$(card).data('position')];
-  }
+  $('.draggable').mouseInteractions();
 
-  function DOMfromCard(card) {
-    return $('#column_' + card.column + ' .position_' + card.position);
-  }
-
-  /*for (i = 1; i <= 9; i++) {
-    for (j=2; j<=60; j++) {
-      $('#column_' + i + ' div.card:nth-child('+ j +')').addClass('position_' + j);
-          //$('#column_' + i + ' div.card:nth-child('+ j +')').css("top", (j-1)*30+'px').css("position","absolute");
-    }
-  } */
-    
-
- /* $('#column_1').append(put(card[1]));
-  $('#column_1').append(put(card[2]));
-  $('#column_1').append(put(card[3]));
-
-  $('#column_3').append(put(card[3]));
-
-  $('#column_5').append($('#column_1 .card:first')); */
-
- 
-  // add snappers:
-  for (i = 1; i<=104; i++) {
-    if (card[i].open == true) {
-     var open_card = DOMfromCard(card[i]);
-     $(open_card).removeClass('draggable_disabled').addClass('draggable');
-     $('.snapper', open_card).addClass('active');
-    }
-  }
-
-  $('.draggable').mouseover(function() {
+/*  $('.draggable').mouseover(function() {
     if ($(this).children('.snapper').hasClass('active')) {
       $(this).children('.snapper').removeClass('active');
     }
@@ -54,7 +16,7 @@ $(function() {
 
   $('.draggable').mouseup(function() {
     $('img', this).css('border','1px solid #cccccc');
-  });
+  }); */
 
   // remove ghost images that would appear when dragging - even if $('.draggable_disabled').draggable('disable') was set
   $('.draggable_disabled').mousedown(function() {
@@ -89,7 +51,7 @@ $(function() {
       var end_pos = $(this).position();
       $("span#end_pos").text("End POS:\n x: " + end_pos.left + " // y: " + end_pos.top);
       $('img', this).css('border','1px solid #cccccc');
-      var card = CardFromDOM(this);
+      var card = DOM2Card(this);
       $(this).css('z-index', (card.position + ''));
       $(this).css('left','0px');
       //$(this).css('top', (card.position - 1) * 30 + 'px');
@@ -126,13 +88,13 @@ $(function() {
       var dropped_on_dom   = this;
 
       $('img', this).css('border', '1px solid #ccc');
-      var dropped_card = CardFromDOM(dropped_card_dom);
-      var dropped_on   = CardFromDOM(dropped_on_dom);
+      var dropped_card = DOM2Card(dropped_card_dom);
+      var dropped_on   = DOM2Card(dropped_on_dom);
 
       if ((dropped_card.position > 1) && (column[dropped_card.column][dropped_card.position - 1] != undefined)) {
         var card_to_open = column[dropped_card.column][dropped_card.position - 1]
         card_to_open.open = true;
-        OpenCard(card_to_open);
+        flipCard(card_to_open);
       }
 
       // the dropped card's Z-INDEX is updated in draggable's 'stop' event, which is executed AFTER droppable's 'drop'
@@ -184,7 +146,7 @@ $(function() {
       //  .wrappAll('<div class="wrapper">');
 
       //column[$(ui.draggable).data('column')][$(ui.draggable).data('position')];
-      //var dropped_card = CardFromDOM($(ui.draggable)column[$(ui.draggable).data('column')][$(ui.draggable).data('position')];
+      //var dropped_card = DOM2Card($(ui.draggable)column[$(ui.draggable).data('column')][$(ui.draggable).data('position')];
       // console.log(dropped_card);
       //$(dropped_card_dom).addClass('zindex_' + (dropped_on.position + 1));
       //$(ui.draggable).className = $(ui.draggable).className.replace(/\bbg.*?\b/g, '12');
@@ -193,7 +155,7 @@ $(function() {
   });
 
   $('.draggable').mouseout(function() {
-    dragged_card = CardFromDOM(this);
+    dragged_card = DOM2Card(this);
     if ((dragged_card.open == true) && ((dragged_card.column > 0) && (dragged_card.column < 10)))
       $(this).children('.snapper').addClass('active');
   });

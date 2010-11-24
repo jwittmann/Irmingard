@@ -99,47 +99,20 @@ body
       width: $card_width
       height: $card_height
 
-    .droppable
-      float: right
-      position: absolute
-      right: 100px
-      top: 100px
-      z-index: 2
+      .snapper
+        width: $card_width
+        height: 1px
+        position: absolute
+        top: $card_spacing_vertical
+        left: 0 
 
-    .card_wrapper_2
-      //position: absolute
-      //left: $c1_left
-      //top: $column_margin_top
-
-    //#king_of_clubs
-      //position: absolute
-      //left: $c1_left
-      //top: $column_margin_top
-
-    //#queen_of_hearts
-      //position: absolute
-      //left: $c1_left
-      //top: $card_spacing_vertical
-
-    //#ace_of_spades
-      //position: absolute
-      //left: $c5_left
-      //top: $column_margin_top 
-
-    div.card .snapper
-      width: $card_width
-      height: 1px
-      position: absolute
-      top: $card_spacing_vertical
-      left: 0 
-
-    img.card
-      width: 88px
-      height: 124px
-      padding: 3px
-      position: relative
-      overflow: hidden
-      background: #fff
-      border: 1px solid #888
-      -moz-border-radius: 7px
-      border-radius: 7px
+      img
+        width: 88px
+        height: 124px
+        padding: 3px
+        position: relative
+        overflow: hidden
+        background: #fff
+        border: 1px solid #888
+        -moz-border-radius: 7px
+        border-radius: 7px
