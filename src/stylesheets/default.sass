@@ -88,7 +88,7 @@ body
     @for $i from 2 through 30
       .card_wrapper_#{$i}
         width: $card_width
-        height: ($card_height + $i * $card_spacing_vertical)
+        height: ($card_height + ($i - 1) * $card_spacing_vertical)
 
     @for $i from 1 through 60
       .position_#{$i}

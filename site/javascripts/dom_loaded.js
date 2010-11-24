@@ -164,9 +164,14 @@ $(function() {
         scroll: false,
       });
 
+      
+      // custom unwrapAll
+      //$('.card_wrapper_2').replaceWith($('.card_wrapper_2').contents());
+
+
       //$('.card_wrapper_2 ').;
 
-    $(this).droppable("option", "disabled", true);
+      $(this).droppable("option", "disabled", true);
       
       
       /*$('#column_' + dropped_on.column + ' div.open:first').before('<div class="wrapper">'); // works!
